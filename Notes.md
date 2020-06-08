@@ -4,7 +4,7 @@ From there I unzipped the data, loaded imported the file into excel and filtered
 Wrote =SUM(P15500:P15503) in P15500 and got the sum of 20780. 
 highlighted those cells and ctrl highlighted the catagories age 1-4
 Inserted a chart and fiddled aroud with the interfaces and got the graph looking the way I wanted
-![alt-text](census-data-2016.jpeg)
+![alt-text](census-data-2016.png)
 I then moved on to plotting in Rstudio.
 I cannot open it from Anaconda Powershell so I access it through my machines search. 
 Open, and create a new R script.
