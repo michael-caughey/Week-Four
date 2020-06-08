@@ -1,5 +1,5 @@
 So I started with module 1, Excel and R.
-I started off with some issues with downloading the csv file from the webpage. I right cicked and ended up downloading all of the data from the page. I reached out in our discord and got the link from Dr. Graham to te .csv file. 
+I started off with some issues with downloading the csv file from the webpage. I right clicked and ended up downloading all of the data from the page. I reached out in our discord and got the link from Dr. Graham to te .csv file. 
 From there I unzipped the data, loaded imported the file into excel and filtered for results for the Ottawa and Gatineau area (Ottawa side only) under filter in 'Geo name'. 
 Wrote =SUM(P15500:P15503) in P15500 and got the sum of 20780. 
 highlighted those cells and ctrl highlighted the catagories age 1-4
@@ -38,7 +38,7 @@ I used the codes that we had in week two and subbed out line 17 for 'world war t
 a script for getting materials from the Chronicling America website
 """
 
-# Make these modules available
+#Make these modules available
 import requests
 import json
 
@@ -105,58 +105,58 @@ I then installed the packages
 install.packages('tidyverse')
 install.packages('tidytext')
 and created and tidied more data using:
-# slightly modified version of
-# https://tm4ss.github.io/docs/Tutorial_6_Topic_Models.html
-# by Andreas Niekler, Gregor Wiedemann
+#slightly modified version of
+#https://tm4ss.github.io/docs/Tutorial_6_Topic_Models.html
+#by Andreas Niekler, Gregor Wiedemann
 
-# libraries
+#libraries
 library(tidyverse)
 library(tidytext)
 
-# load, clean, and get data into shape
+#load, clean, and get data into shape
 
-# cb = chapbooks
+#cb = chapbooks
 cb  <- read_csv("chapbooks-text.csv")
 
-# put the data into a tibble (data structure for tidytext)
-# we are also telling R what kind of data is in the 'text',
-# 'line', and 'data' columns in our original csv.
-# we are also stripping out all the digits from the text column
+#put the data into a tibble (data structure for tidytext)
+#we are also telling R what kind of data is in the 'text',
+#'line', and 'data' columns in our original csv.
+#we are also stripping out all the digits from the text column
 
 cb_df <- tibble(id = cb$line, text = (str_remove_all(cb$text, "[0-9]")), date = cb$date)
 
 #turn cb_df into tidy format
-# use `View(cb_df)` to see the difference
-# from the previous table
+#use `View(cb_df)` to see the difference
+#from the previous table
 
 tidy_cb <- cb_df %>%
   unnest_tokens(word, text)
 
-# the only time filtering happens
-# load up the default list of stop_words that comes
-# with the tidyverse
+#the only time filtering happens
+#load up the default list of stop_words that comes
+#with the tidyverse
 
 data(stop_words)
 
-# delete stopwords from our data
+#delete stopwords from our data
 tidy_cb <- tidy_cb %>%
   anti_join(stop_words)
  
  Running each line one by one
  I then typed cb to see what my data looks like and cb_df and tidy_cb to change the way the data is presented.
  I then ran the next set of commands in our instructions:
- # this line might take a few moments to run btw
+ #this line might take a few moments to run btw
 cb_words <- tidy_cb %>%
   count(id, word, sort = TRUE)
 
-# take a look at what you've just done
-# by examining the first few lines of `cb_words`
+#take a look at what you've just done
+#by examining the first few lines of `cb_words`
 
 head(cb_words)
 
-# already, you start to get a sense of what's in this dataset...
+#already, you start to get a sense of what's in this dataset...
 
-# turn that into a matrix
+#turn that into a matrix
 dtm <- cb_words %>%
   cast_dtm(id, word, n)
  The last command gave me an error that there is no package called 'tm'
@@ -167,12 +167,12 @@ dtm <- cb_words %>%
  and it worked
  ran into another issue when running the next set of commands to create a topic model:
  require(topicmodels)
-# number of topics
+#number of topics
 K <- 15
-# set random number generator seed
-# for purposes of reproducibility
+#set random number generator seed
+#for purposes of reproducibility
 set.seed(9161)
-# compute the LDA model, inference via 1000 iterations of Gibbs sampling
+#compute the LDA model, inference via 1000 iterations of Gibbs sampling
 topicModel <- LDA(dtm, K, method="Gibbs", control=list(iter = 500, verbose = 25))
 it says could not find function "LDA", I will look in our group again to see if anyone had this issue
  found a couple people with the same issue, used:
@@ -181,20 +181,20 @@ then ran the code from require(topicmodels)
 and it is loading
 It was successful
 moving on
-# have a look a some of the results (posterior distributions)
+#have a look a some of the results (posterior distributions)
 tmResult <- posterior(topicModel)
 
-# format of the resulting object
+#format of the resulting object
 attributes(tmResult)
 
-# lengthOfVocab
+#lengthOfVocab
 ncol(dtm)
 
-# topics are probability distributions over the entire vocabulary
+#topics are probability distributions over the entire vocabulary
 beta <- tmResult$terms   # get beta from results
 dim(beta)
 
-# for every document we have a probability distribution of its contained topics
+#for every document we have a probability distribution of its contained topics
 theta <- tmResult$topics
 dim(theta)        
 
@@ -203,26 +203,26 @@ topicNames <- apply(top5termsPerTopic, 2, paste, collapse=" ")
 topicNames
 In regards to were to change the number of topics you can do this in line 18 or in regards to where it is in the git line 201. This will change from 5 to 10
 the next portion of code:
-# load libraries for visualization
+#load libraries for visualization
 library("reshape2")
 library("ggplot2")
 
-# select some documents for the purposes of
-# sample visualizations
-# here, the 2nd, 100th, and 200th document
-# in our corpus
+#select some documents for the purposes of
+#sample visualizations
+#here, the 2nd, 100th, and 200th document
+#in our corpus
 
 exampleIds <- c(2, 100, 200)
 
 N <- length(exampleIds)
-# get topic proportions form example documents
+#get topic proportions form example documents
 topicProportionExamples <- theta[exampleIds,]
 colnames(topicProportionExamples) <- topicNames
 
-# put the data into a dataframe just for our visualization
+#put the data into a dataframe just for our visualization
 vizDataFrame <- melt(cbind(data.frame(topicProportionExamples), document = factor(1:N)), variable.name = "topic", id.vars = "document")  
 
-# specify the geometry, aesthetics, and data for a plot
+#specify the geometry, aesthetics, and data for a plot
 ggplot(data = vizDataFrame, aes(topic, value, fill = document), ylab = "proportion") +
   geom_bar(stat="identity") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +  
@@ -230,15 +230,15 @@ ggplot(data = vizDataFrame, aes(topic, value, fill = document), ylab = "proporti
   facet_wrap(~ document, ncol = N)
   success and now to visualize the toics over time:
   cb$decade <- paste0(substr(cb$date, 0, 3), "0")
-# get mean topic proportions per decade
+#get mean topic proportions per decade
 topic_proportion_per_decade <- aggregate(theta, by = list(decade = cb$decade), mean)
-# set topic names to aggregated columns
+#set topic names to aggregated columns
 colnames(topic_proportion_per_decade)[2:(K+1)] <- topicNames
 
-# reshape data frame, for when I get the topics over time thing sorted
+#reshape data frame, for when I get the topics over time thing sorted
 vizDataFrame <- melt(topic_proportion_per_decade, id.vars = "decade")
 
-# plot topic proportions per deacde as bar plot
+#plot topic proportions per deacde as bar plot
 require(pals)
 ggplot(vizDataFrame, aes(x=decade, y=value, fill=variable)) +
   geom_bar(stat = "identity") + ylab("proportion") +
