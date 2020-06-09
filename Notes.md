@@ -164,7 +164,7 @@ dtm <- cb_words %>%
  Nadia had the same issue so I followed the instructions to the solution:
  install.packages("tm")
  library(tm)
- and it worked
+ and it worked.
  ran into another issue when running the next set of commands to create a topic model:
  require(topicmodels)
 #number of topics
